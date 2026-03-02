@@ -1,7 +1,13 @@
+/* --- 1. CONFIGURATION GÉNÉRALE & POLICES --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap');
 
-:root {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Empêche les éléments de déborder */
+}
 
+:root {
     --bg-main: #F8FAFC;
     --bg-cartes: #FFFFFF;
     --main-green: #16A34A;
@@ -13,8 +19,9 @@
     --font-title: 'Poppins', sans-serif;
     --font-text: 'Inter', sans-serif;
 
-
     --radius: 12px;
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 80px;
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
@@ -27,4 +34,189 @@
     --main-text: #F1F5F9;
     --sec-text: #94A3B8;
     --bordres: #334155;
+}
+
+/* --- 2. STRUCTURE SIDEBAR (CORRECTION SCROLL) --- */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--bg-cartes);
+    border-right: 1px solid var(--bordres);
+    display: flex;
+    flex-direction: column;
+    position: fixed; 
+    left: 0;
+    top: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    font-family: var(--font-text);
+    overflow-x: hidden; /* SUPPRIME LA BARRE GRISE DU BAS */
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* --- 3. HEADER & LOGO --- */
+.sidebar_header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--bordres);
+    cursor: pointer;
+}
+
+.logo_btn {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espace entre logo et texte SciMetrics */
+    text-decoration: none;
+}
+
+.logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap; /* Empêche le texte de revenir à la ligne */
+}
+
+.header-text h2 {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    color: var(--main-text);
+    margin: 0;
+}
+
+/* Cache les textes en mode réduit */
+.sidebar.collapsed .header-text,
+.sidebar.collapsed .section-title,
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .arrow,
+.sidebar.collapsed .submenu {
+    display: none;
+}
+
+/* --- 4. NAVIGATION & ÉLÉMENTS DU MENU --- */
+.sidebar_content {
+    padding: 20px 10px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--sec-text);
+    margin: 25px 0 10px 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Pour pousser la flèche à droite */
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: var(--sec-text);
+    font-weight: 500;
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+    background: transparent;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* ESPACE ENTRE ICÔNE ET TEXTE */
+}
+
+.icon-svg {
+    font-size: 1.2rem;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-item:hover {
+    background-color: rgba(22, 163, 74, 0.08);
+    color: var(--main-green);
+}
+
+.nav-item.active {
+    background-color: var(--main-green);
+    color: white !important;
+}
+
+/* --- 5. FLÈCHES (ARROW) ET ROTATION --- */
+.arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease; /* ANIMATION DE ROTATION */
+}
+
+.arrow.rotate {
+    transform: rotate(180deg); /* La flèche se retourne au clic */
+    color: var(--main-green);
+}
+
+/* --- 6. SOUS-MENUS (SUBMENU) --- */
+.submenu {
+    margin-left: 35px;
+    padding-left: 15px;
+    border-left: 1px solid var(--bordres);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+
+.submenu a {
+    text-decoration: none;
+    color: var(--sec-text);
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.submenu a:hover {
+    background-color: rgba(22, 163, 74, 0.08);
+    color: var(--main-green);
+    padding-left: 18px;
+}
+
+/* --- 7. FOOTER (COMPTE & THÈME) --- */
+.sidebar_footer {
+    margin-top: auto;
+    padding: 15px 10px;
+    border-top: 1px solid var(--bordres);
+    background-color: var(--bg-cartes);
+}
+
+.sidebar.collapsed .sidebar_footer {
+    align-items: center;
+    padding: 15px 0;
+}
+
+/* --- 8. AJUSTEMENT DU CONTENU PRINCIPAL --- */
+.main-content {
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
+    padding: 30px;
+    background-color: var(--bg-main);
+    min-height: 100vh;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: var(--sidebar-collapsed-width);
 }
