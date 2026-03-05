@@ -1,20 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+import './assets/style.css';
 
-// Temporary component to prevent crash until you create Dashboard.jsx
-const Dashboard = () => <div style={{padding: '20px'}}><h1>Dashboard Content</h1></div>;
+const Dashboard = () => <div style={{padding: '20px', color: 'white'}}><h1>Dashboard Content</h1></div>;
 
 function App() {
   return (
     <BrowserRouter>
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <main style={{ flex: 1, minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
+      <Sidebar/>
+      <main className="main-content" style={{ display: 'flex', flexDirection: 'column' }}>
+        <Header/> 
+        <div className="content-area" style={{ flex: 1, padding: '20px' }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
           </Routes>
-        </main>
-      </div>
+        </div>
+      </main>
     </BrowserRouter>
   );
 }
