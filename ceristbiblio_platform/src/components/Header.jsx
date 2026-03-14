@@ -10,7 +10,6 @@ function Header() {
   });
 
   useEffect(() => {
-    // Met à jour le thème manuellement
     if (isDarkMode) {
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('theme', 'dark');
