@@ -1,34 +1,55 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSearch } from '../context/useSearch';
 import { FaSearch, FaSpinner } from "react-icons/fa";
-import ResearcherCard from '../components/ResearcherCard';
+import AdvancedSearchBuilder from '../components/AdvancedSearchBuilder';
 
 function OpenAlex() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { setResults, setSearchQuery, setLoading } = useSearch();
+  const navigate = useNavigate();
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!query.trim()) {
+  const handleAdvancedSearch = async (searchData) => {
+    const { criteria, primaryQuery } = searchData;
+    
+    if (!primaryQuery.trim()) {
       setError("Veuillez entrer une recherche");
       return;
     }
 
+    setLocalLoading(true);
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/researcher/${query}`
+      const response = await axios.post(
+        `http://localhost:8000/api/researcher/search/advanced`,
+        {
+          criteria: criteria,
+          primaryQuery: primaryQuery
+        }
       );
-      setResults(response.data);
-      console.log("Données reçues :", response.data);
+      console.log("API Response:", response);
+      console.log("Results from API:", response.data.results);
+      setSearchQuery(primaryQuery);
+      setResults(response.data.results || []);
+      
+      // Store search metadata
+      sessionStorage.setItem('searchMetadata', JSON.stringify({
+        criteria,
+        primaryQuery,
+        query: response.data.query || ""
+      }));
+      
+      console.log("State updated - navigating...");
+      navigate('/results');
     } catch (error) {
       console.error("Erreur de connexion :", error);
       setError("Une erreur est survenue lors de la recherche. Veuillez réessayer.");
     } finally {
+      setLocalLoading(false);
       setLoading(false);
     }
   };
@@ -40,33 +61,7 @@ function OpenAlex() {
         <p>Trouvez des chercheurs, publications et données académiques</p>
       </div>
 
-      <form className="openalex-search-form" onSubmit={handleSearch}>
-        <div className="search-input-wrapper">
-          <FaSearch className="search-icon-input" />
-          <input
-            type="text"
-            placeholder="Rechercher un chercheur, un auteur, une publication..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="search-input"
-            disabled={loading}
-          />
-        </div>
-        <button
-          type="submit"
-          className="search-btn"
-          disabled={loading}
-        >
-          {loading ? (
-            <>
-              <FaSpinner className="spinner-icon" />
-              Recherche...
-            </>
-          ) : (
-            "Rechercher"
-          )}
-        </button>
-      </form>
+      <AdvancedSearchBuilder onSearch={handleAdvancedSearch} />
 
       {error && (
         <div className="error-message">
@@ -74,34 +69,18 @@ function OpenAlex() {
         </div>
       )}
 
-      {loading && (
+      {localLoading && (
         <div className="loading-container">
           <FaSpinner className="rotating-logo" />
           <p>Recherche en cours...</p>
         </div>
       )}
 
-      {!loading && results.length > 0 && (
-        <div className="results-container">
-          <h2>Résultats ({results.length})</h2>
-          <div className="results-grid">
-            {results.map((result, index) => (
-              <ResearcherCard key={index} data={result} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {!loading && results.length === 0 && query && !error && (
-        <div className="no-results">
-          <p>Aucun résultat trouvé pour "{query}"</p>
-        </div>
-      )}
-
-      {!loading && results.length === 0 && !query && !error && (
+      {!localLoading && !error && (
         <div className="empty-state">
           <FaSearch className="empty-state-icon" />
-          <p>Commencez par entrer une recherche</p>
+          <h3>Commencez votre recherche</h3>
+          <p>Utilisez le formulaire ci-dessus pour rechercher des chercheurs</p>
         </div>
       )}
     </div>

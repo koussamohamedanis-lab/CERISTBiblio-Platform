@@ -13,3 +13,8 @@ dist/
 # Local IDE
 .vscode/
 .idea/
+
+# Development files (documentation/notes)
+logic.txt
+plan.txt
+OpenAlex.jsx

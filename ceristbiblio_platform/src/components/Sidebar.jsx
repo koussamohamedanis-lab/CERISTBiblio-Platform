@@ -88,7 +88,7 @@ function Sidebar() {
           </button>
           {isFilterOpen && !isCollapsed && (
             <div className="submenu">
-              <Link to="/filter">Options</Link>
+              <Link to="/results">Results</Link>
             </div>
           )}
         </div>

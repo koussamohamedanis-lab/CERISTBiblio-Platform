@@ -53,8 +53,8 @@ function Header() {
         >
           <FaUserCircle className="profile-avatar" />
            <div className="profile-info">
-            <span className="user-name">Mohamed Anis</span>
-            <span className="user-role">Chercheur / Admin</span>
+            <span className="user-name">Utilisateur</span>
+            <span className="user-role">Chercheur</span>
             </div>
 
           {isOpen && (
@@ -67,7 +67,6 @@ function Header() {
               </button>
               <button className="dropdown-item">Déconnexion</button>
             </div>
-
           )}
 
         </div>
