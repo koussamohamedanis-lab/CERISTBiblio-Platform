@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 // Importation de quelques icônes SVG simples (installe react-icons si ce n'est pas fait)
 import { 
-  FaHome, FaDatabase, FaFilter, FaChartBar, 
+  FaHome, FaDatabase, FaCompass, FaChartBar, 
   FaRobot, FaChevronDown 
 } from "react-icons/fa";
 
@@ -81,8 +81,8 @@ function Sidebar() {
         <div className="menu-group">
           <button className="nav-item dropdown-btn" onClick={() => !isCollapsed && setIsFilterOpen(!isFilterOpen)}>
             <div className="btn-content">
-              <FaFilter className="icon-svg" />
-              {!isCollapsed && <span>Filter</span>}
+              <FaCompass className="icon-svg" />
+              {!isCollapsed && <span>Explore</span>}
             </div>
             <FaChevronDown className={`arrow ${isFilterOpen ? 'rotate' : ''}`} style={{ fontSize: '0.7rem' }} />
           </button>

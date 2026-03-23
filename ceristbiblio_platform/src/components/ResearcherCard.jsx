@@ -6,6 +6,8 @@ function ResearcherCard({ data }) {
   const citations = data.cited_by_count || 0;
   const affiliation = data.last_known_institutions?.[0]?.display_name || "Unknown";
   const profileUrl = data.id || "#";
+  const country = data.last_known_institutions?.[0]?.country_code || "N/A";
+  const topics = data.x_concepts?.slice(0, 3).map(c => c.display_name).join(", ") || "Généraliste";
 
   return (
     <div className="researcher-card">
@@ -20,6 +22,8 @@ function ResearcherCard({ data }) {
         <div className="stat-item"><strong>Works:</strong> {works}</div>
         <div className="stat-item"><strong>Citations:</strong> {citations}</div>
         <div className="stat-item"><strong>Affiliation:</strong> {affiliation}</div>
+        <div className="stat-item"><strong>Pays:</strong> {country}</div>
+        <div className="stat-item"><strong>Topics:</strong> {topics}</div>
       </div>
 
       {data.counts_by_year && data.counts_by_year.length > 0 && (

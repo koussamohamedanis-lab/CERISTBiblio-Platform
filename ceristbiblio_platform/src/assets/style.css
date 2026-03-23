@@ -604,7 +604,7 @@
 
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
 }
 
@@ -643,7 +643,6 @@
     background-color: var(--bg-cartes);
     box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
-    min-width: 300px;
 }
 
 .researcher-card:hover {
@@ -1013,6 +1012,24 @@
     }
 }
 
+@media (max-width: 768px) {
+    .researcher-card {
+        min-width: unset;
+    }
+
+    .researcher-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .results-page {
+        padding: 1rem;
+    }
+
+    .results-grid {
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 480px) {
     .advanced-search-builder {
         padding: 1rem;
@@ -1042,5 +1059,41 @@
     .add-criteria-btn,
     .search-btn-submit {
         width: 100%;
+    }
+
+    .results-page {
+        padding: 0.5rem;
+    }
+
+    .results-container {
+        padding: 1rem;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .researcher-card {
+        padding: 0.75rem;
+        min-width: unset;
+    }
+
+    .researcher-name {
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .researcher-stats {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .stat-item {
+        font-size: 0.75rem;
+    }
+
+    .researcher-year {
+        font-size: 0.75rem;
     }
 }
