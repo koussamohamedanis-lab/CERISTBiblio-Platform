@@ -3,7 +3,7 @@ import csv
 import io
 from urllib.parse import quote
 
-async def fetch_openalex_data(name: str, search_by: str = "author"):
+async def fetch_openalex_data(name: str, search_by: str = "author", page: int = 1, per_page: int = 20):
     """Fetch OpenAlex data by single criterion (supports author, domain, country, lab)"""
     if not name or not name.strip():
         return {"error": "Search term cannot be empty", "results": []}
@@ -23,7 +23,11 @@ async def fetch_openalex_data(name: str, search_by: str = "author"):
     else:
         filter_str = f"display_name:{quote(name)}"
     
-    url = f"https://api.openalex.org/authors?filter={filter_str}&per-page=25"
+    # Ensure page and per_page are valid
+    page = max(1, page)
+    per_page = min(max(1, per_page), 200)  # Max 200 results per page
+    
+    url = f"https://api.openalex.org/authors?filter={filter_str}&page={page}&per-page={per_page}"
     
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -31,8 +35,9 @@ async def fetch_openalex_data(name: str, search_by: str = "author"):
             if response.status_code == 200:
                 data = response.json()
                 return {
+                    "meta": data.get('meta', {}),
                     "count": data['meta']['count'],
-                    "results": data['results'][:5],  # Top 5 results
+                    "results": data['results'],
                     "query": filter_str
                 }
             return {"error": f"OpenAlex returned status {response.status_code}", "results": []}
@@ -42,10 +47,59 @@ async def fetch_openalex_data(name: str, search_by: str = "author"):
         return {"error": f"Error: {str(e)}", "results": []}
 
 
-async def fetch_openalex_advanced(criteria_list: list):
+async def fetch_author_works(author_id: str):
+    """Fetch all works for a specific author from OpenAlex"""
+    if not author_id or not author_id.strip():
+        return {"error": "Author ID cannot be empty", "works": []}
+    
+    # Clean up author ID - remove https://openalex.org/ if present
+    author_id = author_id.strip()
+    if "openalex.org" in author_id:
+        author_id = author_id.split("/")[-1]
+    
+    url = f"https://api.openalex.org/works?filter=author.id:{author_id}&sort=publication_date:desc&per-page=100"
+    
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                works = []
+                for work in data.get('results', []):
+                    works.append({
+                        "id": work.get("id"),
+                        "title": work.get("title"),
+                        "display_name": work.get("display_name"),
+                        "publication_date": work.get("publication_date"),
+                        "publication_year": work.get("publication_year"),
+                        "cited_by_count": work.get("cited_by_count"),
+                        "open_access": work.get("open_access"),
+                        "doi": work.get("doi"),
+                        "url": work.get("url"),
+                        "abstract": work.get("abstract_inverted_index"),
+                        "authorships": work.get("authorships"),
+                    })
+                
+                return {
+                    "count": data['meta']['count'],
+                    "works": works,
+                    "author_id": author_id
+                }
+            return {"error": f"OpenAlex returned status {response.status_code}", "works": []}
+    except httpx.RequestError as e:
+        return {"error": f"Connection error: {str(e)}", "works": []}
+    except Exception as e:
+        return {"error": f"Error: {str(e)}", "works": []}
+
+
+async def fetch_openalex_advanced(criteria_list: list, page: int = 1, per_page: int = 20):
     """Fetch OpenAlex data with multiple criteria and operators (OR/AND)"""
     if not criteria_list:
         return {"error": "No criteria provided", "results": []}
+    
+    # Ensure page and per_page are valid
+    page = max(1, page)
+    per_page = min(max(1, per_page), 200)  # Max 200 results per page
     
     # Build filters respecting operators: OR (|) and AND (,)
     filters_str = None
@@ -96,7 +150,7 @@ async def fetch_openalex_advanced(criteria_list: list):
     if not filters_str:
         return {"error": "No valid search criteria. For Domain/Field search, use valid OpenAlex topic IDs starting with 'C' (e.g., C39432304 for AI)", "results": []}
     
-    url = f"https://api.openalex.org/authors?filter={filters_str}&per-page=25"
+    url = f"https://api.openalex.org/authors?filter={filters_str}&page={page}&per-page={per_page}"
     print(f"DEBUG: Final OpenAlex URL: {url}")
     
     try:
@@ -108,8 +162,9 @@ async def fetch_openalex_advanced(criteria_list: list):
                 print(f"DEBUG: OpenAlex data count: {data['meta']['count']}")
                 print(f"DEBUG: OpenAlex results count: {len(data['results'])}")
                 return {
+                    "meta": data.get('meta', {}),
                     "count": data['meta']['count'],
-                    "results": data['results'][:10],
+                    "results": data['results'],
                     "query": filters_str
                 }
             else:

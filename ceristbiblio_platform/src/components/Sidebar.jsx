@@ -19,7 +19,7 @@ function Sidebar() {
     <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       
       {/* Header */}
-      <div className="sidebar_header" onClick={toggleSidebar} style={{ cursor: 'pointer' }}>
+      <div className="sidebar_header" onClick={toggleSidebar}>
         <div className="logo_wrapper">
           <img src={Logo} alt="Logo" className="logo-img" />
           {!isCollapsed && (
@@ -55,14 +55,13 @@ function Sidebar() {
             <div className="submenu">
                
                 <div 
-                    className="nav-item sub-dropdown" 
+                    className="nav-item sub-dropdown cursor-pointer" 
                     onClick={() => setIsApiOpen(!isApiOpen)}
-                    style={{ cursor: 'pointer' }}
                     >
                     <div className="btn-content">
                         <span>API</span>
                     </div>
-                    <FaChevronDown className={`arrow ${isApiOpen ? 'rotate' : ''}`} style={{ fontSize: '0.7rem' }} />
+                    <FaChevronDown className={`arrow arrow-small ${isApiOpen ? 'rotate' : ''}`} />
                     </div>
 
                  
@@ -84,7 +83,7 @@ function Sidebar() {
               <FaCompass className="icon-svg" />
               {!isCollapsed && <span>Explore</span>}
             </div>
-            <FaChevronDown className={`arrow ${isFilterOpen ? 'rotate' : ''}`} style={{ fontSize: '0.7rem' }} />
+            <FaChevronDown className={`arrow arrow-small ${isFilterOpen ? 'rotate' : ''}`} />
           </button>
           {isFilterOpen && !isCollapsed && (
             <div className="submenu">
@@ -100,7 +99,7 @@ function Sidebar() {
               <FaChartBar className="icon-svg" />
               {!isCollapsed && <span>Analysis</span>}
             </div>
-            <FaChevronDown className={`arrow ${isAnalysisOpen ? 'rotate' : ''}`} style={{ fontSize: '0.7rem' }} />
+            <FaChevronDown className={`arrow arrow-small ${isAnalysisOpen ? 'rotate' : ''}`} />
           </button>
           {isAnalysisOpen && !isCollapsed && (
             <div className="submenu">

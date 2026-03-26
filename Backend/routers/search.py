@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
-from services.search_service import fetch_openalex_data, fetch_openalex_advanced
+from services.search_service import fetch_openalex_data, fetch_openalex_advanced, fetch_author_works
 
 router = APIRouter()
 
@@ -13,11 +13,19 @@ class SearchCriterion(BaseModel):
 class AdvancedSearchRequest(BaseModel):
     criteria: List[SearchCriterion]
     primaryQuery: str
+    page: Optional[int] = 1
+    perPage: Optional[int] = 20
 
 @router.get("/researcher/{name}")
-async def get_researcher(name: str, search_by: str = "author"):
+async def get_researcher(name: str, search_by: str = "author", page: int = 1, per_page: int = 20):
     """Simple search by single criterion (author, domain, country, lab)"""
-    results = await fetch_openalex_data(name, search_by)
+    results = await fetch_openalex_data(name, search_by, page, per_page)
+    return results
+
+@router.get("/researcher/{author_id}/works")
+async def get_author_works(author_id: str):
+    """Fetch all works for a specific author"""
+    results = await fetch_author_works(author_id)
     return results
 
 @router.post("/researcher/search/advanced")
@@ -32,5 +40,8 @@ async def advanced_search(request: AdvancedSearchRequest):
     if not valid_criteria:
         raise HTTPException(status_code=400, detail="No valid search criteria")
     
-    results = await fetch_openalex_advanced(valid_criteria)
+    page = request.page or 1
+    per_page = request.perPage or 20
+    
+    results = await fetch_openalex_advanced(valid_criteria, page, per_page)
     return results

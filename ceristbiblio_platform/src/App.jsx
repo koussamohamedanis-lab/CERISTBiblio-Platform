@@ -3,25 +3,25 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import OpenAlex from "./pages/OpenAlex";
 import Results from "./pages/Results";
+import Overview from "./pages/Overview";
+import Authors from "./pages/Authors";
+import Sources from "./pages/Sources";
+import Documents from "./pages/Documents";
 import './assets/style.css';
 
-const Dashboard = () => <div style={{padding: '20px', color: 'white'}}><h1>Dashboard Content</h1></div>;
-const PubMed = () => <div style={{padding: '20px', color: 'white'}}><h1>PubMed Search</h1><p>Coming soon...</p></div>;
-const Upload = () => <div style={{padding: '20px', color: 'white'}}><h1>Upload File</h1><p>Coming soon...</p></div>;
-const Filter = () => <div style={{padding: '20px', color: 'white'}}><h1>Filter Results</h1><p>Coming soon...</p></div>;
-const Overview = () => <div style={{padding: '20px', color: 'white'}}><h1>Overview</h1><p>Coming soon...</p></div>;
-const Sources = () => <div style={{padding: '20px', color: 'white'}}><h1>Sources</h1><p>Coming soon...</p></div>;
-const Authors = () => <div style={{padding: '20px', color: 'white'}}><h1>Authors</h1><p>Coming soon...</p></div>;
-const Documents = () => <div style={{padding: '20px', color: 'white'}}><h1>Documents</h1><p>Coming soon...</p></div>;
-const AIAssistant = () => <div style={{padding: '20px', color: 'white'}}><h1>AI Assistant</h1><p>Coming soon...</p></div>;
+const Dashboard = () => <div className="placeholder-page"><h1>Dashboard Content</h1></div>;
+const PubMed = () => <div className="placeholder-page"><h1>PubMed Search</h1><p>Coming soon...</p></div>;
+const Upload = () => <div className="placeholder-page"><h1>Upload File</h1><p>Coming soon...</p></div>;
+const Filter = () => <div className="placeholder-page"><h1>Filter Results</h1><p>Coming soon...</p></div>;
+const AIAssistant = () => <div className="placeholder-page"><h1>AI Assistant</h1><p>Coming soon...</p></div>;
 
 function App() {
   return (
     <BrowserRouter>
       <Sidebar/>
-      <main className="main-content" style={{ display: 'flex', flexDirection: 'column' }}>
+      <main className="main-content">
         <Header/> 
-        <div className="content-area" style={{ flex: 1, padding: '20px' }}>
+        <div className="content-area-wrapper">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/openalex" element={<OpenAlex />} />

@@ -1,3 +1,5 @@
+import React from 'react';
+
 function ResearcherCard({ data }) {
   if (!data) return null;
 
@@ -7,7 +9,7 @@ function ResearcherCard({ data }) {
   const affiliation = data.last_known_institutions?.[0]?.display_name || "Unknown";
   const profileUrl = data.id || "#";
   const country = data.last_known_institutions?.[0]?.country_code || "N/A";
-  const topics = data.x_concepts?.slice(0, 3).map(c => c.display_name).join(", ") || "Généraliste";
+  const topics = data.x_concepts?.slice(0, 3).map((concept) => concept.display_name).join(", ") || "Généraliste";
 
   return (
     <div className="researcher-card">

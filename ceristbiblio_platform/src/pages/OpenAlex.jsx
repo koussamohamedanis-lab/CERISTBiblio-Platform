@@ -8,7 +8,7 @@ import AdvancedSearchBuilder from '../components/AdvancedSearchBuilder';
 function OpenAlex() {
   const [localLoading, setLocalLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { setResults, setSearchQuery, setLoading } = useSearch();
+  const { setResults, setSearchQuery, setLoading, setSearchCriteria } = useSearch();
   const navigate = useNavigate();
 
   const handleAdvancedSearch = async (searchData) => {
@@ -28,13 +28,19 @@ function OpenAlex() {
         `http://localhost:8000/api/researcher/search/advanced`,
         {
           criteria: criteria,
-          primaryQuery: primaryQuery
+          primaryQuery: primaryQuery,
+          page: 1,
+          perPage: 20
         }
       );
       console.log("API Response:", response);
       console.log("Results from API:", response.data.results);
+      
+      const totalCount = response.data.meta?.count || response.data.results?.length || 0;
+      
       setSearchQuery(primaryQuery);
-      setResults(response.data.results || []);
+      setResults(response.data.results || [], totalCount);
+      setSearchCriteria({ criteria, primaryQuery });
       
       // Store search metadata
       sessionStorage.setItem('searchMetadata', JSON.stringify({
